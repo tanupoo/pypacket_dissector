@@ -16,7 +16,7 @@ def read_file(filename, verbose=False, debug=False):
         data = fd.buffer.read()
     #
     if verbose:
-        print(dis.decoder.dump_byte(data))
+        print(dis.dump_byte(data))
     #
     ret3 = dis.decoder(data)
     print(dis.dumps(ret3, indent=4))
