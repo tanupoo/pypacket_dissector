@@ -12,10 +12,10 @@ If you want a full set of dissectors, use dpkt, scapy or something like that.
 
 ## goal
 
-- python3
-- simple, lightweight
-- json fiendly
-- support only L3 or upper protocol.
+- simple, lightweight.
+- python3 based.
+- json fiendly.
+- separation from pcap.
 
 ## requirement
 
