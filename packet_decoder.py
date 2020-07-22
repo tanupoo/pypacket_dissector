@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import sys
-import argparse
 from binascii import a2b_hex
 from datetime import datetime
+from argparse import ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter
 
 try:
     from pypacket_dissector import decoder as dis
@@ -53,32 +53,30 @@ def read_stdin(filename, **kwargs):
         ret = dis.decoder(data)
         print(dis.dumps(ret, indent=4))
 
-def parse_args():
-    p = argparse.ArgumentParser(description="a packet dissector.", epilog="")
-    p.add_argument("target", metavar="TARGET", type=str,
-                   help="""specify a filename containing
-                   packet data.  '-' allows the stdin as the input.""")
-    p.add_argument("--delimiter", action="store", dest="_delimiter",
-                   default="00ff707970636170ff00",
-                   help='''specify a delimiter to read a series of data from the
-                   stdin. e.g. "00ff707970636170ff00"''')
-    p.add_argument("--noshow-sep", action="store_false", dest="show_sep",
-                   help="disable to show the separator.")
-    p.add_argument("-v", action="store_true", dest="f_verbose",
-                   help="enable verbose mode.")
-    p.add_argument("-d", action="store_true", dest="f_debug",
-                   help="enable debug mode.")
+def main():
+    ap = ArgumentParser(description="a packet dissector.",
+                        formatter_class=ArgumentDefaultsHelpFormatter)
+    ap.add_argument("target",
+                    help="""specify a filename containing
+                    packet data.  '-' allows the stdin as the input.""")
+    ap.add_argument("--delimiter", action="store", dest="_delimiter",
+                    default="00ff707970636170ff00",
+                    help='''specify a delimiter to read a series of data
+                    from the stdin. e.g. "00ff707970636170ff00"''')
+    ap.add_argument("--noshow-sep", action="store_false", dest="show_sep",
+                    help="disable to show the separator.")
+    ap.add_argument("-v", action="store_true", dest="f_verbose",
+                    help="enable verbose mode.")
+    ap.add_argument("-d", action="store_true", dest="f_debug",
+                    help="enable debug mode.")
+    opt = ap.parse_args()
+    #
+    opt.delimiter = a2b_hex(opt._delimiter)
+    if opt.target == "-":
+        read_stdin(opt.target, delimiter=opt.delimiter, show_sep=opt.show_sep,
+                   verbose=opt.f_verbose, debug=opt.f_debug)
+    else:
+        read_file(opt.target, verbose=opt.f_verbose, debug=opt.f_debug)
 
-    args = p.parse_args()
-    args.delimiter = a2b_hex(args._delimiter)
-    return args
-
-'''
-main
-'''
-opt = parse_args()
-if opt.target == "-":
-    read_stdin(opt.target, delimiter=opt.delimiter, show_sep=opt.show_sep,
-               verbose=opt.f_verbose, debug=opt.f_debug)
-else:
-    read_file(opt.target, verbose=opt.f_verbose, debug=opt.f_debug)
+if __name__ == "__main__":
+    main()
