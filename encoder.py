@@ -70,7 +70,8 @@ def encode_hdr(hdr_map, hdr_list):
         # get the value.
         v = get_elm(fld_name)
         if v is None:
-            raise ValueError("{:s} is not found in the map.".format(fld_name))
+            v = fld_def
+            #raise ValueError("{:s} is not found in the map.".format(fld_name))
         # set the value to the bytearray.
         if fld_bits:
             if fld_v is None:
